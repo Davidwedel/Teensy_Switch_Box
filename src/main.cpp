@@ -448,7 +448,7 @@ void loop() {
 
 			//130 pp meter, 3.6 kmh = 1 m/sec = 130hz or gpsSpeed * 130/3.6 or gpsSpeed * 36.1111
 			//gpsSpeed = ((float)(autoSteerUdpData[5] | autoSteerUdpData[6] << 8)) * 0.1;
-			float speedPulse = gpsSpeed * 36.1111;
+			float speedPulse = gpsSpeed * 3.61111;
 
 			Serial.print(gpsSpeed); Serial.print(" -> "); Serial.println(speedPulse);
 
@@ -568,7 +568,9 @@ void receiveUDP()
 				//															Serial.print(udpData[3]);
 				//														Serial.print("	machine data	");
 				uTurn = udpData[5];
-				gpsSpeed = ((float)(udpData[5] | udpData[6] << 8)) * 0.1;
+				//gpsSpeed = ((float)(udpData[5] | udpData[6] << 8)) * 0.1;
+				//gpsSpeed = ((float)(udpData[6] << 8)) * 0.1;
+				gpsSpeed = ((float)(udpData[6] << 8)) / 10;
 				gpsSpeedUpdateTimer = 0;
 
 
