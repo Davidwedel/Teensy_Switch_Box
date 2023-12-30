@@ -564,13 +564,16 @@ void receiveUDP()
 			 */
 			if (udpData[3] == 239) // machine data
 			{
+				Serial.println("machine");
 				//																Serial.print("pgn==");
 				//															Serial.print(udpData[3]);
 				//														Serial.print("	machine data	");
 				uTurn = udpData[5];
 				//gpsSpeed = ((float)(udpData[5] | udpData[6] << 8)) * 0.1;
 				//gpsSpeed = ((float)(udpData[6] << 8)) * 0.1;
-				gpsSpeed = ((float)(udpData[6] << 8)) / 10;
+				//gpsSpeed = ((float)(udpData[6] << 8)) / 10;
+				gpsSpeed = (float)udpData[6];
+				Serial.println((float)udpData[6]);
 				gpsSpeedUpdateTimer = 0;
 
 
