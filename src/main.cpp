@@ -29,7 +29,7 @@
 struct ConfigIP {
 	uint8_t ipOne = 192;
 	uint8_t ipTwo = 168;
-	uint8_t ipThree = 0;
+	uint8_t ipThree = 1;
 };
 ConfigIP networkAddress; // 3 bytes
 
@@ -300,6 +300,15 @@ void loop() {
 		// section relays
 		if (aogConfig.user2 == 0){
 			SetRelays();
+		}else{
+		digitalWrite(24, HIGH);
+		digitalWrite(3, HIGH);
+		digitalWrite(4, HIGH);
+		digitalWrite(5, HIGH);
+		digitalWrite(6, HIGH);
+
+	if (pin[4])
+		digitalWrite(6, relayState[pin[4] - 1]);
 		}
 
 		// checksum
@@ -400,8 +409,8 @@ void loop() {
 						bitClear(offHi, count-8);
 					}
 				} else { //Signal LOW ==> switch is closed middle position
-					Serial.print("bitread =");
-					Serial.println(bitRead(onLo, count));
+					//Serial.print("bitread =");
+					//Serial.println(bitRead(onLo, count));
 					if(bitRead(onLo, count)==1){
 						mainByte = 2;
 					}
@@ -444,13 +453,13 @@ void loop() {
 		if (speedPulseUpdateTimer > 200) // 100 (10hz) seems to cause tone lock ups occasionally
 		{
 			speedPulseUpdateTimer = 0;
-			Serial.println("running");
+			//Serial.println("running");
 
 			//130 pp meter, 3.6 kmh = 1 m/sec = 130hz or gpsSpeed * 130/3.6 or gpsSpeed * 36.1111
 			//gpsSpeed = ((float)(autoSteerUdpData[5] | autoSteerUdpData[6] << 8)) * 0.1;
 			float speedPulse = gpsSpeed * 3.61111;
 
-			Serial.print(gpsSpeed); Serial.print(" -> "); Serial.println(speedPulse);
+			//Serial.print(gpsSpeed); Serial.print(" -> "); Serial.println(speedPulse);
 
 			if (gpsSpeed > 0.11) { // 0.10 wasn't high enough
 				tone(pulsePin, uint16_t(speedPulse));
@@ -564,7 +573,6 @@ void receiveUDP()
 			 */
 			if (udpData[3] == 239) // machine data
 			{
-				Serial.println("machine");
 				//																Serial.print("pgn==");
 				//															Serial.print(udpData[3]);
 				//														Serial.print("	machine data	");
@@ -573,7 +581,6 @@ void receiveUDP()
 				//gpsSpeed = ((float)(udpData[6] << 8)) * 0.1;
 				//gpsSpeed = ((float)(udpData[6] << 8)) / 10;
 				gpsSpeed = (float)udpData[6];
-				Serial.println((float)udpData[6]);
 				gpsSpeedUpdateTimer = 0;
 
 
