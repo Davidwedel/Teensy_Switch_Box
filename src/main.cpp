@@ -29,7 +29,7 @@
 struct ConfigIP {
 	uint8_t ipOne = 192;
 	uint8_t ipTwo = 168;
-	uint8_t ipThree = 1;
+	uint8_t ipThree = 0;
 };
 ConfigIP networkAddress; // 3 bytes
 
@@ -209,6 +209,7 @@ void setup() {
 	pinMode(AutoSwitch, INPUT_PULLUP);  
 	pinMode(ManuelSwitch, INPUT_PULLUP);
 	pinMode(valveSwitch, INPUT_PULLUP);
+	pinMode(13, OUTPUT);
 
 	for (count = 0; count < NUM_OF_RELAYS; count++) {//switch pins
 		pinMode(switchPinArray[count], INPUT_PULLUP);
@@ -219,6 +220,7 @@ void loop() {
 	currentTime = millis();
 
 	if (currentTime - lastTime >= LOOP_TIME) {
+		digitalWrite(13, HIGH);
 		lastTime = currentTime;
 		/*								Serial.println("");
 											Serial.print("etl	");
@@ -459,7 +461,7 @@ void loop() {
 			//gpsSpeed = ((float)(autoSteerUdpData[5] | autoSteerUdpData[6] << 8)) * 0.1;
 			float speedPulse = gpsSpeed * 3.61111;
 
-			//Serial.print(gpsSpeed); Serial.print(" -> "); Serial.println(speedPulse);
+			Serial.print(gpsSpeed); Serial.print(" -> "); Serial.println(speedPulse);
 
 			if (gpsSpeed > 0.11) { // 0.10 wasn't high enough
 				tone(pulsePin, uint16_t(speedPulse));
