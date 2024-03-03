@@ -240,6 +240,7 @@ void loop() {
 			failTimer = 0;
 			Serial.println();
 			Serial.println("-----------------------------------------------------");
+			Serial.print("Loop time => "); Serial.println(millis()/1000);
 			Serial.print("Watchdog => "); Serial.println(watchdogTimer);
 			Serial.print("Watchdog Fails => "); Serial.println(watchdogFails);
 			Serial.print("First fail => "); Serial.print(timeofFirstFail); Serial.println(" Seconds");
@@ -485,7 +486,7 @@ void loop() {
 			//gpsSpeed = ((float)(autoSteerUdpData[5] | autoSteerUdpData[6] << 8)) * 0.1;
 			float speedPulse = gpsSpeed * 3.61111;
 
-			Serial.print(gpsSpeed); Serial.print(" -> "); Serial.println(speedPulse);
+			//Serial.print(gpsSpeed); Serial.print(" -> "); Serial.println(speedPulse);
 
 			if (gpsSpeed > 0.11) { // 0.10 wasn't high enough
 				tone(pulsePin, uint16_t(speedPulse));
@@ -499,7 +500,7 @@ void loop() {
 	else  // if gpsSpeedUpdateTimer hasn't update for 1000 ms, turn off speed pulse
 	{
 		noTone(pulsePin);
-		Serial.println("old signal");
+		//Serial.println("old signal");
 	}
 
 
@@ -573,7 +574,7 @@ void SendUdp(uint8_t *data, uint8_t datalen, IPAddress dip, uint16_t dport)
 	EthUDPToAOG.beginPacket(dip, dport);
 	EthUDPToAOG.write(data, datalen);
 	EthUDPToAOG.endPacket();
-	//Serial.print("S-UDP ");
+	Serial.println("S-UDP ");
 }
 
 void setRGBcolor(int red, int green, int blue)
@@ -591,6 +592,7 @@ void receiveUDP()
 
 		if (udpData[0] == 0x80 && udpData[1] == 0x81 && udpData[2] == 0x7F) // Data
 		{
+			Serial.println("Udp Received");
 
 			/*							for (int16_t i = 0; i < len; i++) {
 											Serial.print(udpData[i], HEX);
