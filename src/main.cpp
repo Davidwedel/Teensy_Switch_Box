@@ -106,6 +106,10 @@ uint16_t count = 0;
 uint8_t watchdogTimer = 20;   // make sure we are talking to AOG
 uint8_t serialResetTimer = 0; // if serial buffer is getting full, empty it
 
+int watchdogFails = 0;
+uint8_t failTimer = 0;
+uint32_t timeofLastFail = 0;
+uint32_t timeofFirstFail = 0;
 elapsedMillis speedPulseUpdateTimer = 0;
 elapsedMillis gpsSpeedUpdateTimer = 0;
 
@@ -222,14 +226,34 @@ void loop() {
 	if (currentTime - lastTime >= LOOP_TIME) {
 		digitalWrite(13, HIGH);
 		lastTime = currentTime;
-		/*								Serial.println("");
-											Serial.print("etl	");
-											Serial.print("wdt:");
-											Serial.print(watchdogTimer);*/
-
-		// If connection lost to AgOpenGPS, the watchdog will count up
+		//start of debug
+		failTimer++;
 		if (watchdogTimer++ > 250)
 			watchdogTimer = 20;
+		if (watchdogTimer == 19){
+			watchdogFails++;
+			timeofLastFail = (millis()/1000);
+			if (timeofFirstFail == 0)
+				timeofFirstFail = (millis()/1000);
+		}
+		if (failTimer >8){
+			failTimer = 0;
+			Serial.println();
+			Serial.println("-----------------------------------------------------");
+			Serial.print("Watchdog => "); Serial.println(watchdogTimer);
+			Serial.print("Watchdog Fails => "); Serial.println(watchdogFails);
+			Serial.print("First fail => "); Serial.print(timeofFirstFail); Serial.println(" Seconds");
+			Serial.print("Last fail => "); Serial.print(timeofLastFail); Serial.println(" Seconds");
+			if (!EthUdpRunning)
+				Serial.println("Eth not running");
+			// Check for Ethernet hardware present
+			if (Ethernet.hardwareStatus() == EthernetNoHardware) 
+			{
+				Serial.println("Ethernet shield was not found. What's going on here???.");
+			}
+
+		}
+		//end of debug
 
 		// clean out serial buffer to prevent buffer overflow
 		if (serialResetTimer++ > 20) {
